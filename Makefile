@@ -9,15 +9,7 @@ PORT ?= 8000
 build:
 	docker build -t $(IMAGE) .
 
-# Kill process on $(PORT), remove any existing container, then run fresh
 run:
-# 	@echo ">> Ensuring port $(PORT) is free..."
-# 	-@PID=$$(lsof -ti :$(PORT)); \
-# 	if [ -n "$$PID" ]; then \
-# 		echo ">> Killing process $$PID on port $(PORT)"; \
-# 		kill -9 $$PID || true; \
-# 		sleep 1; \
-# 	fi
 	@echo ">> Removing existing container (if any): $(CONTAINER_NAME)"
 	-@docker rm -f $(CONTAINER_NAME) 2>/dev/null || true
 	@echo ">> Starting container $(CONTAINER_NAME) on http://localhost:$(PORT)"

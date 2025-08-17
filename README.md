@@ -27,72 +27,102 @@ It combines:
 
 ```
 .
-├── core/
-│   ├── train.py          # Training script
-│   ├── model_io.py       # Save/load artifacts
-│   ├── dependencies.py   # Config & shared utilities
+├── src/
+│   ├── core/                     # Core ML logic
+│   │   ├── train.py              # Training script
+│   │   ├── training_pipeline.py  # Full training pipeline
+│   │   ├── data_access.py        # Data loading & preprocessing
+│   │   ├── features.py           # Feature engineering
+│   │   ├── model_io.py           # Save/load model artifacts
+│   │   └── __init__.py
+│   │
+│   ├── engine/                   # Business / model engine layer
+│   │   └── controller/           # Controller logic
+│   │       ├── churn_detection.py
+│   │       ├── types.py
+│   │       └── __init__.py
+│   │
+│   ├── service/                  # API service layer
+│   │   ├── main.py               # FastAPI entrypoint
+│   │   ├── churn_detection.py    # API endpoints
+│   │   ├── dependencies.py       # Config & shared deps
+│   │   ├── types.py              # Request/response schemas
+│   │   └── __init__.py
+│   │
+│   └── __init__.py
 │
-├── app/
-│   ├── main.py           # FastAPI entrypoint
-│   ├── controller.py     # API endpoints
+├── config/
+│   └── config.yaml               # Global configuration
 │
-├── artifacts/            # Models, references, metrics
-├── Makefile              # Reproducible commands
-├── pyproject.toml        # Project dependencies (uv / PEP 621)
-├── .pre-commit-config.yaml  # Code quality hooks
-└── README.md
+├── data/                         # Raw and reference data
+│   ├── put_data_here             # Placeholder
+│   ├── customer_churn.json       # Full dataset (large)
+│   └── customer_churn_mini.json  # Mini dataset for testing
+│
+├── artifacts/                    # Models, metrics, logs
+├── notebooks/                    # Experimentation notebooks
+│
+├── .gitignore
+├── .pre-commit-config.yaml       # Code quality hooks (ruff, black, etc.)
+├── Dockerfile
+├── Makefile                      # Reproducible commands
+├── pyproject.toml                # Dependencies & build config (uv / PEP 621)
+├── README.md
 ```
 
 ---
+
+
 
 ## ⚙️ Installation
 
-Clone the repo and install dependencies with [uv](https://github.com/astral-sh/uv):
+Clone the repository:
 
 ```bash
-uv sync
+git clone https://github.com/<your-username>/churn-prediction.git
+cd churn-prediction
 ```
-
-Or with pip:
-
-```bash
-pip install -r requirements.txt
-```
-
----
 
 ## 📂 Dataset
-Before running training or serving, you need to download the data file in teh /data folder:
+Before running training or serving, you need to download the data file in the /data folder:
 ```bash
 customer_churn.json
 ```
+
+### Build and Run with Docker + Make
+
+Build the Docker image:
+```bash
+make build
+```
+
+Run the API service:
+```bash
+make run
+```
+
+The service will be available at: http://localhost:8000
 
 
 ## 🏗️ Usage
 
 ### 1. Train a model
+You can train via API:
 ```bash
-make train
+curl -X POST "http://0.0.0.0:8000/api/v1/train" \
+  -H "Content-Type: application/json"
 ```
 
-Artifacts saved to `artifacts/`, including:
-- `model.pkl` – trained model  
-- `metadata.json` – metrics + threshold  
-
-### 2. Run API service
+### 2. Inference
+You can run via API:
 ```bash
-make serve
-```
-API runs at `http://0.0.0.0:8000/`
-
-Endpoints:
-- `POST /train` → retrain model (saves artifacts + logs to MLflow).  
-- `POST /predict` → predict churn probabilities.  
-
-Example `curl`:
-
-```bash
-curl -X POST "http://0.0.0.0:8000/predict"   -H "Content-Type: application/json"   -d '{"user_id": 123, "feature1": 5.0, "feature2": 0.7}'
+curl -X POST "http://0.0.0.0:8000/api/v1/predict" \
+  -H "accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "user_id": "100024",
+  "date": "2018-10-08 21:04:57"
+}'
 ```
 
 ---
