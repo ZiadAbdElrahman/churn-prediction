@@ -1,0 +1,47 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# === Environments ===
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+pip-wheel-metadata/
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Logs & temp ===
+*.log
+*.out
+*.tmp
+.DS_Store
+
+# === Data ===
+data/*.json
+data/*.csv
+data/*.parquet
+data/*.pkl
+# artifacts/
+models/
+checkpoints/
+.ruff_cache
+
+# === MLflow local tracking ===
+*mlruns*
+mlartifacts/
+
+# === Docker ===
+*.pid
+*.sock
+*.tar

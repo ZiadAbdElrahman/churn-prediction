@@ -1,0 +1,16 @@
+paths:
+  artifacts_dir: artifacts
+  model_file: artifacts/best_model.xgb
+  threshold_file: artifacts/threshold.txt
+  feature_list_file: artifacts/feature_list.json
+  events_file: data/customer_churn.json 
+
+model:
+  horizon_days: 5
+  recent_window: 7
+  long_window: 14
+  precision_floor: 0.7
+  scale_pos_weight: null   # null => compute from data
+
+server:
+  prefix: /api/v1
